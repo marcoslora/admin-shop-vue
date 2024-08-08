@@ -7,7 +7,6 @@ export const getProductsActions = async (page: number = 1, limit: number = 10) =
     const { data } = await shopApi.get<Product[]>(
       `/products?limit=${limit}&offset=${page * limit}`,
     );
-    console.log(`/products?limit=${limit}&offset=${page * limit}`);
     return data.map((product) => ({
       ...product,
       images: product.images.map(getProductImageActions),
