@@ -101,23 +101,17 @@ import { getProductsActions } from '@/modules/products/actions';
 import ProductList from '@/modules/products/components/ProductList.vue';
 import ButtonPagination from '@/modules/common/components/ButtonPagination.vue';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
-import { useRoute } from 'vue-router';
-import { ref, watch, watchEffect } from 'vue';
-const route = useRoute();
-const page = ref(Number(route.query.page) || 1);
+import { usePagination } from '@/modules/common/composables/usePagination';
+import { watchEffect } from 'vue';
+
 const queryClient = useQueryClient();
+const { page } = usePagination();
 const { data: products } = useQuery({
   queryKey: ['products', { page: page }],
   queryFn: () => getProductsActions(page.value),
   // staleTime: 1000 * 60,
 });
-watch(
-  () => route.query.page,
-  (newPage) => {
-    page.value = Number(newPage) || 1;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  },
-);
+
 watchEffect(() => {
   queryClient.prefetchQuery({
     queryKey: ['products', { page: page.value + 1 }],
