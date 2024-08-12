@@ -26,8 +26,9 @@
           />
           <span class="text-red-400" v-if="errors.title">{{ errors.title }}</span> -->
       </div>
-
+      W
       <div class="mb-4">
+        W
         <label for="slug" class="form-label">Slug</label>
         <CustomInput v-model="slug" v-bind="slugAttrs" :error="errors.slug" />
       </div>

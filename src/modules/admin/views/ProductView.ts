@@ -64,6 +64,7 @@ export default defineComponent({
     const { fields: images } = useFieldArray<string>('images');
 
     const onSubmit = handleSubmit((value) => {
+      console.log('aqui', title.value, 'separacion', titleAttrs.value);
       console.log({ value });
     });
 
