@@ -26,9 +26,7 @@
           />
           <span class="text-red-400" v-if="errors.title">{{ errors.title }}</span> -->
       </div>
-      W
       <div class="mb-4">
-        W
         <label for="slug" class="form-label">Slug</label>
         <CustomInput v-model="slug" v-bind="slugAttrs" :error="errors.slug" />
       </div>
@@ -107,8 +105,9 @@
       <!-- Botón para guardar -->
       <div class="my-4 text-right">
         <button
+          :disabled="isPending"
           type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="disabled:bg-gray-300 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Guardar
         </button>

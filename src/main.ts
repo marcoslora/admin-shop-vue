@@ -3,6 +3,7 @@ import './assets/main.css';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import { VueQueryPlugin } from '@tanstack/vue-query';
+// @ts-ignore
 import App from './App.vue';
 import router from './router';
 import Toast from 'vue-toastification';

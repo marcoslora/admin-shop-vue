@@ -1,12 +1,15 @@
 import { defineComponent, watch, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
-import { useQuery } from '@tanstack/vue-query';
+import { useMutation, useQuery } from '@tanstack/vue-query';
 import { useFieldArray, useForm } from 'vee-validate';
 import * as yup from 'yup';
 
-import { getProductById } from '@/modules/products/actions';
-import CustomInput from '@/modules/common/components/CustomInput.vue';
+import { createUpdateProductAction, getProductById } from '@/modules/products/actions';
+// @ts-ignore
+import CustomInput from '../../common/components/CustomInput.vue';
+// @ts-ignore
 import CustomTextArea from '@/modules/common/components/CustomTextArea.vue';
+import { useToast } from 'vue-toastification';
 
 const validationSchema = yup.object({
   title: yup.string().required('Este campo es super importante').min(3, 'Mínimo de 3 letras!!!'),
@@ -16,13 +19,6 @@ const validationSchema = yup.object({
   stock: yup.number().required().min(1),
   gender: yup.string().required().oneOf(['men', 'women', 'kid']),
 });
-
-// const validationSchema = {
-//   ...
-//   ..
-//   ..
-//   ...
-// }
 
 export default defineComponent({
   components: {
@@ -37,16 +33,24 @@ export default defineComponent({
   },
   setup(props) {
     const router = useRouter();
+    const toast = useToast();
 
     const {
       data: product,
       isError,
       isLoading,
+      refetch,
     } = useQuery({
       queryKey: ['product', props.productId],
       queryFn: () => getProductById(props.productId),
       retry: false,
     });
+    const {
+      mutate,
+      isPending,
+      isSuccess: isUpdateSuccess,
+      data: updateProduct,
+    } = useMutation({ mutationFn: createUpdateProductAction });
 
     const { values, defineField, errors, handleSubmit, resetForm, meta } = useForm({
       validationSchema,
@@ -63,9 +67,8 @@ export default defineComponent({
     const { fields: sizes, remove: removeSize, push: pushSize } = useFieldArray<string>('sizes');
     const { fields: images } = useFieldArray<string>('images');
 
-    const onSubmit = handleSubmit((value) => {
-      console.log('aqui', title.value, 'separacion', titleAttrs.value);
-      console.log({ value });
+    const onSubmit = handleSubmit((values) => {
+      mutate(values);
     });
 
     const toggleSize = (size: string) => {
@@ -100,6 +103,20 @@ export default defineComponent({
         immediate: true,
       },
     );
+    watch(isUpdateSuccess, (value) => {
+      if (!value) return;
+      toast.success('Producto actualizado correctamente');
+      router.replace(`/admin/products/${updateProduct.value.id}`);
+      resetForm({
+        values: updateProduct.value,
+      });
+    });
+    watch(
+      () => props.productId,
+      () => {
+        refetch();
+      },
+    );
 
     return {
       // Properties
@@ -119,6 +136,7 @@ export default defineComponent({
       stockAttrs,
       gender,
       genderAttrs,
+      isPending,
 
       sizes,
       images,

@@ -14,7 +14,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@tanstack/vue-query": "^5.51.17",
+    "@tanstack/vue-query": "^5.52.0",
     "@tanstack/vue-query-devtools": "^5.51.17",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.3",
